@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <title>immortan</title>
+  <style type="text/css" media="screen">
+    #map{
+      top: 65px;
+      margin: auto;
+      width: 1440px;
+      height: 900px;
+    }
+  </style>
+  <script>
+    var map;
+    var arrMarkers = [];
+    var arrInfoWindows = [];
+    function mapInit(){
+      var centerCoord = new google.maps.LatLng(35.6852, 139.7528);
+      var mapOptions = {
+        zoom: 2,
+        center: centerCoord,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      $.getJSON("/json/google_map.json", {}, function(data){
+        $.each(data.Marker, function(i, item){
+          var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(item.lat, item.lng),
+            map: map,
+            title: item.content
+          });
+          arrMarkers[i] = marker;
+          var infowindow = new google.maps.InfoWindow({
+            content: "<h3>"+ item.content + "</h3>"
+          });
+          arrInfoWindows[i] = infowindow;
+          google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
+          });
+        });
+      });
+    }
+    $(function(){
+      mapInit();
+      $("#markers a").live("click", function(){
+        var i = $(this).attr("rel");
+        arrInfoWindows[i].open(map, arrMarkers[i]);
+      });
+    });
+  </script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">immortan</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="https://github.com/ntddk/immortan/">About</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://twitter.com/ntddk" target="_blank">@ntddk</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <div id="container">
+    <div id="header"> </div>
+    <div id="map"> </div>
+  </div>
+</body>
+</html>
