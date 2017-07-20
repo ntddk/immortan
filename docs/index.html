@@ -28,7 +28,7 @@
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      $.getJSON("/json/google_map.json", {}, function(data){
+      $.getJSON("json/google_map.json", {}, function(data){
         $.each(data.Marker, function(i, item){
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(item.lat, item.lng),
